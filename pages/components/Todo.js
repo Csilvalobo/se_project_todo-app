@@ -64,4 +64,3 @@ export default class Todo {
     return this._element;
   }
 }
-
