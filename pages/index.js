@@ -1,5 +1,5 @@
 import { initialTodos, validationConfig } from './utils/constants.js';
-import {Todo} from './components/Todo.js';
+import Todo from './components/Todo.js';
 import { v4 as uuidv4 } from 'https://jspm.dev/uuid';
 import { FormValidator } from './components/FormValidator.js';
 
@@ -9,7 +9,7 @@ const addTodoForm = addTodoPopup.querySelector(".popup__form");
 const addTodoCloseBtn = addTodoPopup.querySelector(".popup__close");
 const todoTemplate = document.querySelector("#todo-template");
 const todosList = document.querySelector(".todos__list");
-const formValidator = new FormValidator(addTodoForm, validationConfig);
+const formValidator = new FormValidator(validationConfig, addTodoForm);
 formValidator.enableValidation();
 
 const openModal = (modal) => {
@@ -23,7 +23,6 @@ const closeModal = (modal) => {
 const generateTodo = (data) => {
 const todo = new Todo(data, '#todo-template');
 return todo.getView();
-};
 
   todoDeleteBtn.addEventListener("click", () => {
     todoElement.remove();
