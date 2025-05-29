@@ -90,9 +90,10 @@ export default class Todo {
   }
 
   // Removes the todo element from DOM
-  remove() {
-    this._element.remove();
-  }
+remove() {
+  this._element.remove();
+  this._element = null; // Clear reference for GC
+}
 
   getView() {
     return this._element;

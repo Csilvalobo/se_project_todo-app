@@ -1,57 +1,32 @@
 export default class TodoCounter {
-  /**
-   * @param {string} totalSelector - selector for total todos count element
-   * @param {string} completedSelector - selector for completed todos count element
-   * @param {number} initialTotal - initial total todos count
-   * @param {number} initialCompleted - initial completed todos count
-   */
-  constructor(totalSelector, completedSelector, initialTotal = 0, initialCompleted = 0) {
-    this._totalElement = document.querySelector(totalSelector);
-    this._completedElement = document.querySelector(completedSelector);
-    this._totalCount = initialTotal;
-    this._completedCount = initialCompleted;
+  constructor(todos, selector) {
+    this._element = document.querySelector(selector);
+    this._total = todos.length;
+    this._completed = todos.filter(todo => todo.completed).length;
 
-    this._updateTotal();
-    this._updateCompleted();
+    this._updateText();
   }
 
-  // Private methods to update DOM elements
-  _updateTotal() {
-    if (this._totalElement) this._totalElement.textContent = this._totalCount;
-  }
-  _updateCompleted() {
-    if (this._completedElement) this._completedElement.textContent = this._completedCount;
-  }
+  updateCompleted = (increment) => {
+    this._completed += increment ? 1 : -1;
+    if (this._completed < 0) this._completed = 0;
+    if (this._completed > this._total) this._completed = this._total;
 
-  // Public methods to update counts and UI
-  incrementTotal() {
-    this._totalCount++;
-    this._updateTotal();
-  }
-  decrementTotal() {
-    if (this._totalCount > 0) {
-      this._totalCount--;
-      this._updateTotal();
+    this._updateText();
+  };
+
+  updateTotal = (increment) => {
+    this._total += increment ? 1 : -1;
+    if (this._total < 0) this._total = 0;
+
+    if (this._completed > this._total) this._completed = this._total;
+
+    this._updateText();
+  };
+
+  _updateText() {
+    if (this._element) {
+      this._element.textContent = `Showing ${this._completed} out of ${this._total} completed`;
     }
-  }
-  incrementCompleted() {
-    this._completedCount++;
-    this._updateCompleted();
-  }
-  decrementCompleted() {
-    if (this._completedCount > 0) {
-      this._completedCount--;
-      this._updateCompleted();
-    }
-  }
-
-  // Set counts directly (optional)
-  setTotal(count) {
-    this._totalCount = Math.max(0, count);
-    this._updateTotal();
-  }
-  setCompleted(count) {
-    this._completedCount = Math.max(0, count);
-    this._updateCompleted();
   }
 }

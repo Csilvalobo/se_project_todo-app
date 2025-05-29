@@ -20,17 +20,14 @@ export default class Popup {
     }
   }
 
-  setEventListeners() {
-    // Close icon
-    this._popup.querySelector('.popup__close').addEventListener('click', () => {
-      this.close();
-    });
+ setEventListeners() {
+  this._popup.addEventListener('mousedown', (event) => {
+    const isOverlay = event.target === this._popup;
+    const isCloseButton = event.target.classList.contains('popup__close');
 
-    // Overlay click
-    this._popup.addEventListener('mousedown', (event) => {
-      if (event.target === this._popup) {
-        this.close();
-      }
-    });
-  }
+    if (isOverlay || isCloseButton) {
+      this.close();
+    }
+  });
+}
 }

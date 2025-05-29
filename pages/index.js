@@ -9,21 +9,15 @@ import { FormValidator } from "./components/FormValidator.js";
 // Elements
 const addTodoButton = document.querySelector(".button_action_add");
 const addTodoForm = document.forms["add-todo-form"];
-const todosList = document.querySelector(".todos__list");
 
-// Initialize todo counter with initial values
-const initialCompletedCount = initialTodos.filter(todo => todo.completed).length;
-const todoCounter = new TodoCounter(
-  ".todo-counter-total",
-  ".todo-counter-completed",
-  initialTodos.length,
-  initialCompletedCount
-);
+// Initialize todo counter with initialTodos and selector for single element text
+const todoCounter = new TodoCounter(initialTodos, ".todo-counter");
 
 // Initialize popup with submit handler
 const addTodoPopup = new PopupWithForm("#add-todo-popup", (formData) => {
   const { name, date } = formData;
   let dateObj = null;
+
   if (date) {
     dateObj = new Date(date);
     dateObj.setMinutes(dateObj.getMinutes() + dateObj.getTimezoneOffset());
@@ -33,11 +27,19 @@ const addTodoPopup = new PopupWithForm("#add-todo-popup", (formData) => {
     id: uuidv4(),
     name,
     date: dateObj,
-    completed: false
+    completed: false,
   };
 
-  renderTodo(newTodo);
-  todoCounter.incrementTotal();
+  // Add new todo item via Section instance
+  todoSection.addItem(newTodo);
+
+  // Update counters accordingly
+  todoCounter.updateTotal(true);
+
+  // Reset form validation state
+  formValidator.resetValidation();
+
+  // Close popup
   addTodoPopup.close();
 });
 addTodoPopup.setEventListeners();
@@ -50,32 +52,22 @@ formValidator.enableValidation();
 const generateTodo = (data) => {
   const todo = new Todo(data, "#todo-template");
 
-  // Handle delete with counter update and DOM removal
   todo.setDeleteHandler(() => {
-    todoCounter.decrementTotal();
+    todoCounter.updateTotal(false);
     if (todo.isCompleted()) {
-      todoCounter.decrementCompleted();
+      todoCounter.updateCompleted(false);
     }
     todo.remove();
   });
 
-  // Handle toggle completed with counter update
   todo.setToggleCompletedHandler((completed) => {
-    completed
-      ? todoCounter.incrementCompleted()
-      : todoCounter.decrementCompleted();
+    todoCounter.updateCompleted(completed);
   });
 
   return todo.getView();
 };
 
-// Render todo to the DOM
-const renderTodo = (todoData) => {
-  const todoElement = generateTodo(todoData);
-  todosList.append(todoElement);
-};
-
-// Render initial todos
+// Initialize Section instance with initial todos and renderer
 const todoSection = new Section(initialTodos, generateTodo, ".todos__list");
 todoSection.render();
 

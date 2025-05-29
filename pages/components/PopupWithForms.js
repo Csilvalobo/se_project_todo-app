@@ -9,11 +9,10 @@ export default class PopupWithForm extends Popup {
     super(popupSelector);
     this._handleFormSubmit = handleFormSubmit;
     this._form = this._popup.querySelector("form");
+    this._inputList = Array.from(this._form.querySelectorAll("input, textarea, select"));
   }
 
-  // Collect all input values into an object
   _getInputValues() {
-    this._inputList = Array.from(this._form.querySelectorAll("input, textarea, select"));
     const formValues = {};
     this._inputList.forEach(input => {
       formValues[input.name] = input.value;
@@ -21,19 +20,12 @@ export default class PopupWithForm extends Popup {
     return formValues;
   }
 
-  // Override setEventListeners to add form submit listener
   setEventListeners() {
     super.setEventListeners();
     this._form.addEventListener("submit", (evt) => {
       evt.preventDefault();
       const inputValues = this._getInputValues();
-      this._handleFormSubmit(inputValues);
+      this._handleFormSubmit(inputValues); // form reset should be triggered from here, after successful submission
     });
-  }
-
-  // Override close to reset the form when popup closes
-  close() {
-    super.close();
-    this._form.reset();
   }
 }
